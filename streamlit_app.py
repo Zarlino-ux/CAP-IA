@@ -36,8 +36,23 @@ from google.colab import drive
 drive.mount('/content/drive')
 
 # Install Ollama application
-!curl https://ollama.com/install.sh | sh
+# CAP-IA
 
+DSC ASSISTANT
+
+## Setup
+
+If your app depends on [Ollama](https://ollama.com/), please install it manually before running the app:
+
+```sh
+curl https://ollama.com/install.sh | sh
+```
+
+Then, install the Python requirements:
+
+```sh
+pip install -r requirements.txt
+```
 # Install Python libraries
 !pip install llama-index llama-index-vector-stores-chroma llama-index-embeddings-huggingface sentence-transformers llama-index-llms-ollama ollama
 
