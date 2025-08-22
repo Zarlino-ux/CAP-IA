@@ -38,7 +38,8 @@ drive.mount('/content/drive')
 # Install Ollama application
 # CAP-IA
 
-DSC ASSISTANT
+import streamlit as st
+st.title("DSC ASSISTANT")
 
 ## Setup
 
