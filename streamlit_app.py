@@ -1,4 +1,6 @@
-!pip install trafilatura
+import requests
+import trafilatura
+# ... rest of your code
 
 # Importiamo le librerie che ci servono
 import requests
