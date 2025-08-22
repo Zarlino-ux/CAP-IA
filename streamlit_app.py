@@ -43,7 +43,7 @@ st.title("DSC ASSISTANT")
 
 ## Setup
 
-If your app depends on [Ollama](https://ollama.com/), please install it manually before running the app:
+# If your app depends on [Ollama](https://ollama.com/), please install it manually before running the app:
 
 ```sh
 curl https://ollama.com/install.sh | sh
