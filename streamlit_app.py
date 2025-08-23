@@ -947,8 +947,9 @@ def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150, ricerca
     Args:
         domanda (str): La domanda da porre
         mostra_fonti (bool): Se mostrare le fonti utilizzate
-        max_lunghezza_estratto (int): Lunghezza massima dell'estratto dalle fonti 
-    """  
+        max_lunghezza_estratto (int): Lunghezza massima dell'estratto dalle fonti
+        ricerca_multilingue (bool): Se effettuare ricerca anche con traduzione
+    """
     
     print(f"\n❓ Domanda: {domanda}")
     print("\n🔄 Elaborazione della risposta in corso...")
