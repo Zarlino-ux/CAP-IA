@@ -940,7 +940,7 @@ Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i conce
         raise e
 
     # --- FASE 4: FUNZIONE PER PORRE DOMANDE ---
-  def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150):
+    def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150):
     """
     Funzione per porre una domanda al sistema DSC-IA
         
