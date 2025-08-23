@@ -45,7 +45,12 @@ st.title("DSC ASSISTANT")
 
 # If your app depends on [Ollama](https://ollama.com/), please install it manually before running the app:
 
-```sh
+import subprocess
+import streamlit as st
+
+# Per eseguire comandi shell
+result = subprocess.run(["ls", "-l"], capture_output=True, text=True)
+st.write(result.stdout)
 curl https://ollama.com/install.sh | sh
 ```
 
