@@ -947,7 +947,7 @@ Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i conce
     Args:
         domanda (str): La domanda da porre
         mostra_fonti (bool): Se mostrare le fonti utilizzate
-        max_lunghezza_estratto (int): Lunghezza massima dell'estratto dalle fonti
+        max_lunghezza_estratto (int): Lunghezza massima dell'estratto dalle fonti""
     """  # <-- QUESTA È LA CHIUSURA (già presente)
     
     print(f"\n❓ Domanda: {domanda}")
