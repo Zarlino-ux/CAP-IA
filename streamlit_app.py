@@ -146,7 +146,14 @@ except Exception as e:
     print(f"Si è verificato un errore durante la lettura del file: {e}")
 
 # Start the Ollama server in the background
-!ollama serve &
+st.header("Gestione Servizio Ollama")
+
+st.markdown("""
+### Comandi utili per Ollama:
+
+**Avviare il servizio:**
+```bash
+ollama serve &
 
 # Wait for the server to start (a few seconds)
 import time
