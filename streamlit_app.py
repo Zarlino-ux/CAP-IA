@@ -941,18 +941,17 @@ Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i conce
 
     # --- FASE 4: FUNZIONE PER PORRE DOMANDE ---
   def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150):
-    """
+    """  # <-- AGGIUNGI QUESTA RIGA DI APERTURA!
     Funzione per porre una domanda al sistema DSC-IA
         
     Args:
         domanda (str): La domanda da porre
         mostra_fonti (bool): Se mostrare le fonti utilizzate
         max_lunghezza_estratto (int): Lunghezza massima dell'estratto dalle fonti
-    """  # <-- QUESTA RIGA MANCAVA!
+    """  # <-- QUESTA È LA CHIUSURA (già presente)
     
     print(f"\n❓ Domanda: {domanda}")
     print("\n🔄 Elaborazione della risposta in corso...")
-    
     try:
         # Eseguiamo la catena con la domanda
         risultato = qa_chain({"query": domanda})
