@@ -51,7 +51,14 @@ import streamlit as st
 # Per eseguire comandi shell
 result = subprocess.run(["ls", "-l"], capture_output=True, text=True)
 st.write(result.stdout)
-curl https://ollama.com/install.sh | sh
+import streamlit as st
+
+st.title("Installa Ollama")
+st.markdown("Esegui questo comando nel tuo terminale:")
+
+st.code("curl https://ollama.com/install.sh | sh", language="bash")
+
+st.info("Nota: Questo comando deve essere eseguito in un terminale, non nello script Python.")
 ```
 
 Then, install the Python requirements:
