@@ -53,27 +53,84 @@ result = subprocess.run(["ls", "-l"], capture_output=True, text=True)
 st.write(result.stdout)
 import streamlit as st
 
+import streamlit as st
+import pandas as pd
+
 st.title("Installa Ollama")
 st.markdown("Esegui questo comando nel tuo terminale:")
 
 st.code("curl https://ollama.com/install.sh | sh", language="bash")
 
 st.info("Nota: Questo comando deve essere eseguito in un terminale, non nello script Python.")
-```
 
-Then, install the Python requirements:
+# Separatore
+st.markdown("---")
 
-```sh
-pip install -r requirements.txt
-```
-# Install Python libraries
-!pip install llama-index llama-index-vector-stores-chroma llama-index-embeddings-huggingface sentence-transformers llama-index-llms-ollama ollama
+# Sezione per l'installazione delle librerie Python
+st.header("Installazione Librerie Python")
 
+st.markdown("""
+Esegui questi comandi nel tuo terminale per installare le librerie necessarie:
+""")
+
+st.code("""
+pip install llama-index llama-index-vector-stores-chroma llama-index-embeddings-huggingface sentence-transformers llama-index-llms-ollama ollama pandas streamlit
+""", language="bash")
+
+# Separatore
+st.markdown("---")
+
+# Sezione per l'importazione delle librerie
+st.header("Importazione Librerie")
+
+st.markdown("Dopo l'installazione, puoi importare le librerie nel tuo script Python:")
+
+# Mostra il codice di importazione
+st.code("""
 import pandas as pd
+import streamlit as st
 
-# L'URL del tuo Foglio Google per l'esportazione
+# Le altre importazioni verranno aggiunte qui dopo l'installazione
+# import llama_index
+# from llama_index.vector_stores import ChromaVectorStore
+# from llama_index.embeddings import HuggingFaceEmbedding
+# from llama_index.llms import Ollama
+""", language="python")
+
+# Separatore
+st.markdown("---")
+
+# Esempio di utilizzo del foglio Google
+st.header("Caricamento dati da Google Sheets")
+
 url_foglio_google = 'https://docs.google.com/spreadsheets/d/1Oqq2d1YodTM_qwCuQxud1O8AZdfRQIQQ/export?format=csv'
 
+if st.button("Carica dati da Google Sheets"):
+    try:
+        # Carica i dati dal foglio Google
+        df = pd.read_csv(url_foglio_google)
+        st.success("Dati caricati correttamente!")
+        
+        # Mostra anteprima dati
+        st.subheader("Anteprima dei dati")
+        st.dataframe(df.head())
+        
+        # Mostra informazioni sul dataset
+        st.subheader("Informazioni sul dataset")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Righe", df.shape[0])
+        with col2:
+            st.metric("Colonne", df.shape[1])
+        with col3:
+            st.metric("Valori mancanti", df.isnull().sum().sum())
+            
+    except Exception as e:
+        st.error(f"Errore nel caricamento dei dati: {e}")
+
+# Footer
+st.markdown("---")
+st.caption("Applicazione Streamlit per gestione dati e Ollama")
 print("--- STO LEGGENDO IL FOGLIO GOOGLE ONLINE ---")
 
 # Leggiamo i dati in una tabella (DataFrame) senza intestazione
