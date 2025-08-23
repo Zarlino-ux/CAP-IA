@@ -940,27 +940,28 @@ Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i conce
         raise e
 
     # --- FASE 4: FUNZIONE PER PORRE DOMANDE ---
-    def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150):
-        """
-        Funzione per porre una domanda al sistema DSC-IA
+  def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150):
+    """
+    Funzione per porre una domanda al sistema DSC-IA
         
-        Args:
-            domanda (str): La domanda da porre
-            mostra_fonti (bool): Se mostrare le fonti utilizzate
-            max_lunghezza_estratto (int): Lunghezza massima dell'estratto dalle fonti
-        """
-        print(f"\n❓ Domanda: {domanda}")
-        print("\n🔄 Elaborazione della risposta in corso...")
+    Args:
+        domanda (str): La domanda da porre
+        mostra_fonti (bool): Se mostrare le fonti utilizzate
+        max_lunghezza_estratto (int): Lunghezza massima dell'estratto dalle fonti
+    """  # <-- QUESTA RIGA MANCAVA!
+    
+    print(f"\n❓ Domanda: {domanda}")
+    print("\n🔄 Elaborazione della risposta in corso...")
+    
+    try:
+        # Eseguiamo la catena con la domanda
+        risultato = qa_chain({"query": domanda})
         
-        try:
-            # Eseguiamo la catena con la domanda
-            risultato = qa_chain({"query": domanda})
-            
-            # Stampiamo la risposta
-            print("\n🤖 Risposta dall'IA DSC:")
-            print("=" * 60)
-            print(risultato['result'])
-            print("=" * 60)
+        # Stampiamo la risposta
+        print("\n🤖 Risposta dall'IA DSC:")
+        print("=" * 60)
+        print(risultato['result'])
+        print("=" * 60)
             
             # Stampiamo le fonti se richiesto
             if mostra_fonti and risultato.get('source_documents'):
