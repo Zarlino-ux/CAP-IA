@@ -908,7 +908,7 @@ else:
         
         # Creiamo un "retriever" ottimizzato
         print("🔄 Configurazione del retriever...")
-         retriever = vector_db.as_retriever(
+            retriever = vector_db.as_retriever(
             search_type="similarity", 
             search_kwargs={
                 "k": 5,  # Numero di documenti da recuperare
