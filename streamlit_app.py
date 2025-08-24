@@ -913,12 +913,12 @@ else:
             search_kwargs={
                 "k": 5,  # Numero di documenti da recuperare
                 "fetch_k": 20  # Numero di documenti da considerare prima del ranking
-            }
-        )
+            }  # <-- AGGIUNGI QUESTA CHIUSURA
+        )  # <-- E QUESTA!
         print("✅ Retriever configurato.")
         
-# Template di prompt personalizzato per risposte più accurate
-custom_prompt_template = """Sei un assistente esperto in Dottrina Sociale della Chiesa e filosofia. 
+        # Template di prompt personalizzato per risposte più accurate
+        custom_prompt_template = """Sei un assistente esperto in Dottrina Sociale della Chiesa e filosofia. 
 Usa SOLO le informazioni fornite nel contesto per rispondere alla domanda.
 Se le informazioni non sono sufficienti per una risposta completa, dillo chiaramente.
 
@@ -927,8 +927,7 @@ Contesto dai documenti:
 
 Domanda: {question}
 
-Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i concetti specifici dai documenti forniti.""" # <-- AGGIUNGI LE VIRGOLETTE DI CHIUSURA
-# Questa è la riga successiva (922)
+Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i concetti specifici dai documenti forniti.""" # Questa è la riga successiva (922)
 custom_prompt = PromptTemplate(
     template=custom_prompt_template,
     input_variables=["context", "question"]
