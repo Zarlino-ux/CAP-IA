@@ -951,7 +951,7 @@ Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i conce
         print(f"🔍 Tipo errore: {type(e).__name__}")
         raise e
 
-    # --- FASE 4: FUNZIONE PER PORRE DOMANDE ---
+# --- FASE 4: FUNZIONE PER PORRE DOMANDE ---
 def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150, ricerca_multilingue=True):
     """
     Funzione per porre una domanda al sistema DSC-IA con supporto multilingue
@@ -963,43 +963,45 @@ def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150, ricerca
         ricerca_multilingue (bool): Se effettuare ricerca anche con traduzione
     """
 
-    print(f"\n❓ Domanda: {domanda}")  # <-- CORRETTO: f"
+    print(f"\n❓ Domanda: {domanda}")
     print("\n🔄 Elaborazione della risposta in corso...")
     
-try:
-    # Eseguiamo la catena con la domanda
-    risultato = qa_chain({"query": domanda})
-    
-    # Stampiamo la risposta
-    print("\n🤖 Risposta dall'IA DSC:")
-    print("=" * 60)
-    print(risultato['result'])
-    print("=" * 60)
-    
-    # Stampiamo le fonti se richiesto
-    if mostra_fonti and risultato.get('source_documents'):
-        print(f"\n📚 Fonti utilizzate ({len(risultato['source_documents'])} documenti):")
-        print("-" * 50)
+    try:  # <-- 4 SPAZI DI INDENTAZIONE! (DENTRO la funzione)
+        # Eseguiamo la catena con la domanda
+        risultato = qa_chain({"query": domanda})
         
-        for i, doc in enumerate(risultato['source_documents'], 1):
-            # Estrai metadati in modo sicuro
-            source = doc.metadata.get('source', 'Fonte sconosciuta')
-            chunk_id = doc.metadata.get('chunk_id', 'N/A')
+        # Stampiamo la risposta
+        print("\n🤖 Risposta dall'IA DSC:")
+        print("=" * 60)
+        print(risultato['result'])
+        print("=" * 60)
+        
+        # Stampiamo le fonti se richiesto
+        if mostra_fonti and risultato.get('source_documents'):
+            print(f"\n📚 Fonti utilizzate ({len(risultato['source_documents'])} documenti):")
+            print("-" * 50)
             
-            # Tronca l'estratto se troppo lungo
-    estratto += "..."
-
-    print(f"  {i}. 📄 {source}")  # <-- CORRETTO: print + f
-    print(f"     🆔 Chunk: {chunk_id}")  # <-- CORRETTO: print + f  
-    print(f"     📝 Estratto: \"{estratto}\"")  # <-- CORRETTO: print + f
-    print()
-
-except Exception as e:  # <-- UN SOLO except
-    print(f"❌ Errore durante l'elaborazione della domanda: {e}")  # <-- 4 SPAZI
-    print(f"🔍 Tipo errore: {type(e).__name__}")  # <-- 4 SPAZI
-    return None  # <-- OK: dentro la funzione poni_domanda
-
-return risultato  # <-- OK: dentro la funzione poni_domanda
+            for i, doc in enumerate(risultato['source_documents'], 1):
+                # Estrai metadati in modo sicuro
+                source = doc.metadata.get('source', 'Fonte sconosciuta')
+                chunk_id = doc.metadata.get('chunk_id', 'N/A')
+                
+                # Tronca l'estratto se troppo lungo
+                estratto = doc.page_content[:max_lunghezza_estratto]  # <-- MANCAVA QUESTA RIGA!
+                if len(doc.page_content) > max_lunghezza_estratto:
+                    estratto += "..."
+                
+                print(f"  {i}. 📄 {source}")
+                print(f"     🆔 Chunk: {chunk_id}")
+                print(f"     📝 Estratto: \"{estratto}\"")
+                print()
+    
+    except Exception as e:
+        print(f"❌ Errore durante l'elaborazione della domanda: {e}")
+        print(f"🔍 Tipo errore: {type(e).__name__}")
+        return None
+    
+    return risultato  # <-- DENTRO la funzione
 
     # --- FASE 5: ESEMPI DI UTILIZZO ---
 print("\n" + "="*80)
