@@ -966,15 +966,15 @@ def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150, ricerca
     print(f"\n❓ Domanda: {domanda}")
     print("\n🔄 Elaborazione della risposta in corso...")
     try:
-        # Eseguiamo la catena con la domanda
-        risultato = qa_chain({"query": domanda})
+    # Eseguiamo la catena con la domanda
+    risultato = qa_chain({"query": domanda})
         
-        # Stampiamo la risposta
-        print("\n🤖 Risposta dall'IA DSC:")
-        print("=" * 60)
-        print(risultato['result'])
-        print("=" * 60)            
-            # Stampiamo le fonti se richiesto
+    # Stampiamo la risposta
+    print("\n🤖 Risposta dall'IA DSC:")
+    print("=" * 60)
+    print(risultato['result'])
+    print("=" * 60)            
+    # Stampiamo le fonti se richiesto
     if mostra_fonti and risultato.get('source_documents'):
                 print(f"\n📚 Fonti utilizzate ({len(risultato['source_documents'])} documenti):")
                 print("-" * 50)
