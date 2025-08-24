@@ -987,20 +987,19 @@ try:
             chunk_id = doc.metadata.get('chunk_id', 'N/A')
             
             # Tronca l'estratto se troppo lungo
-            estratto = doc.page_content[:max_lunghezza_estratto]
-            if len(doc.page_content) > max_lunghezza_estratto:
-                estratto += "..."
-                
-except Exception as e:  # <-- AGGIUNGI QUESTO BLOCCO
-    print(f"❌ Errore durante l'elaborazione della domanda: {e}")
-    return None
-                    
-                    print(f"  {i}. 📄 {source}")
-                    print(f"     🆔 Chunk: {chunk_id}")
-                    print(f"     📝 Estratto: \"{estratto}\"")
-                    print()
-            
-            return risultato
+            estratto += "..."
+
+            print(f"  {i}. 📄 {source}")
+            print(f"     🆔 Chunk: {chunk_id}")
+            print(f"     📝 Estratto: \"{estratto}\"")
+            print()
+
+    except Exception as e:
+        print(f"❌ Errore durante l'elaborazione della domanda: {e}")
+        print(f"🔍 Tipo errore: {type(e).__name__}")
+        return None
+
+    return risultato
             
         except Exception as e:
             print(f"❌ Errore durante l'elaborazione della domanda: {e}")
