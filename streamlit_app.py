@@ -987,20 +987,19 @@ try:
             chunk_id = doc.metadata.get('chunk_id', 'N/A')
             
             # Tronca l'estratto se troppo lungo
-            estratto += "..."
+    estratto += "..."
 
-            print(f"  {i}. 📄 {source}")
-            print(f"     🆔 Chunk: {chunk_id}")
-            print(f"     📝 Estratto: \"{estratto}\"")
-            print()
+    print(f"  {i}. 📄 {source}")  # <-- CORRETTO: print + f
+    print(f"     🆔 Chunk: {chunk_id}")  # <-- CORRETTO: print + f  
+    print(f"     📝 Estratto: \"{estratto}\"")  # <-- CORRETTO: print + f
+    print()
 
-    except Exception as e:
-        print(f"❌ Errore durante l'elaborazione della domanda: {e}")
-        print(f"🔍 Tipo errore: {type(e).__name__}")
-        return None
+except Exception as e:  # <-- SOLO UN except!
+    print(f"❌ Errore durante l'elaborazione della domanda: {e}")  # <-- CORRETTO: print + f
+    print(f"🔍 Tipo errore: {type(e).__name__}")  # <-- CORRETTO: print + f
+    return None
 
-    return risultato
-            
+return risultato
         except Exception as e:
             print(f"❌ Errore durante l'elaborazione della domanda: {e}")
             print(f"🔍 Tipo errore: {type(e).__name__}")
