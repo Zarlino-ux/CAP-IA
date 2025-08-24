@@ -153,7 +153,7 @@ st.markdown("""
 
 **Avviare il servizio:**
 ```bash
-ollama serve &
+ollama serve &""")
 
 # Wait for the server to start (a few seconds)
 import time
@@ -905,12 +905,7 @@ else:
         )
         print("✅ Retriever configurato.")
         
-        # Template di prompt personalizzato per risposte più accurate
-        custom_prompt_template = """Sei un assistente esperto in Dottrina Sociale della Chiesa e filosofia. 
-Usa SOLO le informazioni fornite nel contesto per rispondere alla domanda.
-Se le informazioni non sono sufficienti per una risposta completa, dillo chiaramente.
-
-# Inizia alla riga 913
+# Template di prompt personalizzato per risposte più accurate
 custom_prompt_template = """Sei un assistente esperto in Dottrina Sociale della Chiesa e filosofia. 
 Usa SOLO le informazioni fornite nel contesto per rispondere alla domanda.
 Se le informazioni non sono sufficienti per una risposta completa, dillo chiaramente.
@@ -920,8 +915,7 @@ Contesto dai documenti:
 
 Domanda: {question}
 
-Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i concetti specifici dai documenti forniti.""" # <-- Aggiungi le virgolette di chiusura qui, alla riga 920
-
+Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i concetti specifici dai documenti forniti.""" # <-- AGGIUNGI LE VIRGOLETTE DI CHIUSURA
 # Questa è la riga successiva (922)
 custom_prompt = PromptTemplate(
     template=custom_prompt_template,
