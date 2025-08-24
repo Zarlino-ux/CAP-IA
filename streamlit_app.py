@@ -488,8 +488,10 @@ response = query_engine.query(QUESTION)
 print("\n--- Bot's Answer ---")
 print(response)
 
-!pip install trafilatura
-
+st.subheader("Installazione Trafilatura")
+st.markdown("Per installare trafilatura, esegui nel terminale:")
+st.code("pip install trafilatura", language="bash")
+st.info("⚠️ Riavvia Streamlit dopo l'installazione")
 # ==================================================================================
 # PROGETTO DSC-IA: FASE 2.1 - CREAZIONE DEL DATABASE VETTORIALE (Versione Corretta)
 # ==================================================================================
@@ -501,8 +503,10 @@ print(response)
 # --- FASE 0: INSTALLAZIONE DELLE LIBRERIE NECESSARIE ---
 print("⚙️ Installing necessary libraries...")
 # We use -q (quiet) and -U (upgrade) for a clean installation
-!pip install -q -U google-generativeai langchain-google-genai langchain langchain-community faiss-cpu
-
+st.header("📦 Installazione Dipendenze")
+st.markdown("Esegui questi comandi nel terminale PRIMA di avviare Streamlit:")
+st.code("pip install -q -U google-generativeai langchain-google-genai langchain langchain-community faiss-cpu", language="bash")
+st.warning("⚠️ Riavvia Streamlit dopo l'installazione")
 # --- FASE 1: IMPORT E CONFIGURAZIONE ---
 import os
 import time
@@ -765,7 +769,7 @@ print("="*80)
 
 # --- FASE 0: INSTALLAZIONE DELLE LIBRERIE NECESSARIE ---
 print("⚙️ Installazione delle librerie necessarie...")
-!pip install -q -U google-generativeai langchain-google-genai langchain langchain-community faiss-cpu
+st.code("pip install -q -U google-generativeai langchain-google-genai langchain langchain-community faiss-cpu", language="bash")
 
 # --- FASE 1: IMPORT E CONFIGURAZIONE ---
 import os
@@ -1054,8 +1058,10 @@ poni_domanda("What is subsidiarity")
 
 # --- FASE 0: INSTALLAZIONE DELLE LIBRERIE NECESSARIE ---
 print("⚙️ Installazione delle librerie necessarie...")
-!pip install -q -U google-generativeai langchain-google-genai langchain langchain-community faiss-cpu
-
+# Mostra il comando di installazione all'utente
+st.markdown("**Installa le dipendenze con:**")
+st.code("pip install -q -U google-generativeai langchain-google-genai langchain langchain-community faiss-cpu", language="bash")
+st.warning("Esegui questo comando nel terminale prima di avviare l'applicazione")
 # --- FASE 1: IMPORT E CONFIGURAZIONE ---
 import os
 import google.generativeai as genai
@@ -1483,8 +1489,7 @@ Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i conce
 
 poni_domanda("come faccio a migliorare la sussidiarietà nella mia azienda di 13 dipendenti che produce scarpe, in Veneto")
 
-pip install streamlit langchain google-generativeai faiss-cpu
-
+st.code("pip install streamlit langchain google-generativeai faiss-cpu", language="bash")
 import streamlit as st
 import os
 import google.generativeai as genai
