@@ -1003,47 +1003,47 @@ return risultato
 
 
     # --- FASE 5: ESEMPI DI UTILIZZO ---
-    print("\n" + "="*80)
-    print("🎉 SISTEMA DSC-IA PRONTO ALL'USO!")
-    print("="*80)
+print("\n" + "="*80)
+print("🎉 SISTEMA DSC-IA PRONTO ALL'USO!")
+print("="*80)
     
     # Esempio 1: Domanda predefinita
-    print("\n📋 Esempio 1 - Domanda sul principio di sussidiarietà:")
-    esempio_domanda_1 = "Spiegami il principio di sussidiarietà con un esempio pratico per una piccola impresa."
-    poni_domanda(esempio_domanda_1)
+print("\n📋 Esempio 1 - Domanda sul principio di sussidiarietà:")
+esempio_domanda_1 = "Spiegami il principio di sussidiarietà con un esempio pratico per una piccola impresa."
+poni_domanda(esempio_domanda_1)
     
-    print("\n" + "-"*50)
+print("\n" + "-"*50)
     
     # Esempio 2: Seconda domanda
-    print("\n📋 Esempio 2 - Domanda sulla Dottrina Sociale:")
-    esempio_domanda_2 = "Quali sono i principi fondamentali della Dottrina Sociale della Chiesa?"
-    poni_domanda(esempio_domanda_2)
+print("\n📋 Esempio 2 - Domanda sulla Dottrina Sociale:")
+esempio_domanda_2 = "Quali sono i principi fondamentali della Dottrina Sociale della Chiesa?"
+poni_domanda(esempio_domanda_2)
     
     # --- ISTRUZIONI PER L'USO CONTINUO ---
-    print(f"\n" + "="*80)
-    print("💡 COME CONTINUARE AD USARE IL SISTEMA:")
-    print("="*80)
-    print("Per porre nuove domande, usa la funzione:")
-    print("   poni_domanda(\"La tua domanda qui\")")
-    print("")
-    print("Esempi:")
-    print("   poni_domanda(\"Cos'è la destinazione universale dei beni?\")")
-    print("   poni_domanda(\"Spiegami il rapporto tra lavoro e dignità umana\")")
-    print("   poni_domanda(\"Come si applica la giustizia sociale nell'economia?\", mostra_fonti=False)")
-    print("")
-    print("Parametri opzionali:")
-    print("   - mostra_fonti=True/False (default: True)")
-    print("   - max_lunghezza_estratto=numero (default: 150)")
-    print("="*80)
+print(f"\n" + "="*80)
+print("💡 COME CONTINUARE AD USARE IL SISTEMA:")
+print("="*80)
+print("Per porre nuove domande, usa la funzione:")
+print("   poni_domanda(\"La tua domanda qui\")")
+print("")
+print("Esempi:")
+print("   poni_domanda(\"Cos'è la destinazione universale dei beni?\")")
+print("   poni_domanda(\"Spiegami il rapporto tra lavoro e dignità umana\")")
+print("   poni_domanda(\"Come si applica la giustizia sociale nell'economia?\", mostra_fonti=False)")
+print("")
+print("Parametri opzionali:")
+print("   - mostra_fonti=True/False (default: True)")
+print("   - max_lunghezza_estratto=numero (default: 150)")
+print("="*80)
     
     # --- STATISTICHE FINALI ---
-    print(f"\n📊 STATISTICHE DEL SISTEMA:")
-    print(f"   • Database caricato: ✅")
-    print(f"   • Vettori disponibili: {num_vectors}")
-    print(f"   • Modello LLM: {llm.model_name if hasattr(llm, 'model_name') else 'Gemini (versione rilevata automaticamente)'}")
-    print(f"   • Modello Embedding: Google Embedding-001")
-    print(f"   • Documenti per query: 5")
-    print(f"   • Sistema pronto: ✅")
+print(f"\n📊 STATISTICHE DEL SISTEMA:")
+print(f"   • Database caricato: ✅")
+print(f"   • Vettori disponibili: {num_vectors}")
+print(f"   • Modello LLM: {llm.model_name if hasattr(llm, 'model_name') else 'Gemini (versione rilevata automaticamente)'}")
+print(f"   • Modello Embedding: Google Embedding-001")
+print(f"   • Documenti per query: 5")
+print(f"   • Sistema pronto: ✅")
 
 poni_domanda("come si partecipa alla ricapitolazione in Cristo")
 
