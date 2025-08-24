@@ -196,7 +196,10 @@ print("Phi3 model download complete.")
 
 # --- FASE 0: INSTALLAZIONE DELLE LIBRERIE NECESSARIE ---
 # Aggiungiamo 'pymupdf' per la gestione dei PDF
-!pip install trafilatura pandas pymupdf
+st.header("Installazione Dipendenze")
+st.markdown("Esegui questi comandi nel tuo terminale:")
+st.code("pip install trafilatura pandas pymupdf", language="bash")
+st.info("Nota: Installa queste dipendenze prima di avviare Streamlit")
 
 # --- FASE 1: IMPORT DELLE LIBRERIE E CONNESSIONE A GOOGLE DRIVE ---
 import requests
