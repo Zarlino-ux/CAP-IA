@@ -997,10 +997,9 @@ try:
 except Exception as e:  # <-- UN SOLO except
     print(f"❌ Errore durante l'elaborazione della domanda: {e}")  # <-- 4 SPAZI
     print(f"🔍 Tipo errore: {type(e).__name__}")  # <-- 4 SPAZI
-    return None
+    return None  # <-- OK: dentro la funzione poni_domanda
 
-return risultato
-
+return risultato  # <-- OK: dentro la funzione poni_domanda
 
     # --- FASE 5: ESEMPI DI UTILIZZO ---
 print("\n" + "="*80)
