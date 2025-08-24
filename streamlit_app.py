@@ -962,18 +962,21 @@ def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150, ricerca
         max_lunghezza_estratto (int): Lunghezza massima dell'estratto dalle fonti
         ricerca_multilingue (bool): Se effettuare ricerca anche con traduzione
     """
-    
-    print(f"\n❓ Domanda: {domanda}")
-    print("\n🔄 Elaborazione della risposta in corso...")
-   try:
-    # Eseguiamo la catena con la domanda
-    risultato = qa_chain({"query": domanda})
 
-    # Stampiamo la risposta
-    print("\n🤖 Risposta dall'IA DSC:")
-    print("=" * 60)
-    print(risultato['result'])
-    print("=" * 60)
+    print(f"\n❓ Domanda: {domanda}")  # <-- CORRETTO: f"
+    print("\n🔄 Elaborazione della risposta in corso...")
+    
+    try:  # <-- CORRETTO: indentato con 4 spazi
+        # Eseguiamo la catena con la domanda
+        risultato = qa_chain({"query": domanda})
+        
+        # Stampiamo la risposta
+        print("\n🤖 Risposta dall'IA DSC:")
+        print("=" * 60)
+        print(risultato['result'])
+        print("=" * 60)
+        
+        # Stampiamo le fonti se richiesto
     # Stampiamo le fonti se richiesto
     if mostra_fonti and risultato.get('source_documents'):
         print(f"\n📚 Fonti utilizzate ({len(risultato['source_documents'])}) documenti:")
