@@ -351,8 +351,10 @@ else:
 # ==============================================================================
 
 # --- FASE 0: INSTALLAZIONE DELLE LIBRERIE NECESSARIE ---
-!pip install trafilatura pandas
-
+st.header("📦 Installazione Dipendenze")
+st.markdown("Esegui nel terminale prima di avviare Streamlit:")
+st.code("pip install trafilatura pandas", language="bash")
+st.warning("Questi pacchetti devono essere installati prima di avviare l'applicazione!")
 # --- FASE 1: IMPORT DELLE LIBRERIE E CONNESSIONE A GOOGLE DRIVE ---
 import requests
 import trafilatura
