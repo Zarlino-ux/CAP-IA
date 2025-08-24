@@ -148,7 +148,7 @@ except Exception as e:
 # Start the Ollama server in the background
 st.header("Gestione Servizio Ollama")
 
-st.markdown(""")
+st.markdown("""
 ### Comandi utili per Ollama:
 
 **Avviare il servizio:**
