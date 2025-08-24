@@ -908,13 +908,13 @@ else:
         
         # Creiamo un "retriever" ottimizzato
         print("🔄 Configurazione del retriever...")
-        retriever = vector_db.as_retriever(
+         retriever = vector_db.as_retriever(
             search_type="similarity", 
             search_kwargs={
                 "k": 5,  # Numero di documenti da recuperare
                 "fetch_k": 20  # Numero di documenti da considerare prima del ranking
-            }  # <-- AGGIUNGI QUESTA CHIUSURA
-        )  # <-- E QUESTA!
+            }
+        )
         print("✅ Retriever configurato.")
         
         # Template di prompt personalizzato per risposte più accurate
@@ -927,11 +927,12 @@ Contesto dai documenti:
 
 Domanda: {question}
 
-Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i concetti specifici dai documenti forniti.""" # Questa è la riga successiva (922)
-custom_prompt = PromptTemplate(
-    template=custom_prompt_template,
-    input_variables=["context", "question"]
-)
+Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i concetti specifici dai documenti forniti."""
+
+        custom_prompt = PromptTemplate(
+            template=custom_prompt_template,
+            input_variables=["context", "question"]
+        )
         
         # Assembliamo la catena completa con prompt personalizzato
         print("🔄 Creazione della catena QA...")
@@ -945,7 +946,7 @@ custom_prompt = PromptTemplate(
         )
         print("✅ Sistema di dialogo pronto e ottimizzato.")
 
-    except Exception as e:
+    except Exception as e:  # <-- AGGIUNGI QUESTO BLOCCO except
         print(f"❌ Errore durante la preparazione del sistema di dialogo: {e}")
         print(f"🔍 Tipo errore: {type(e).__name__}")
         raise e
