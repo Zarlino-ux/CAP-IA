@@ -994,16 +994,13 @@ try:
     print(f"     📝 Estratto: \"{estratto}\"")  # <-- CORRETTO: print + f
     print()
 
-except Exception as e:  # <-- SOLO UN except!
-    print(f"❌ Errore durante l'elaborazione della domanda: {e}")  # <-- CORRETTO: print + f
-    print(f"🔍 Tipo errore: {type(e).__name__}")  # <-- CORRETTO: print + f
+except Exception as e:  # <-- UN SOLO except
+    print(f"❌ Errore durante l'elaborazione della domanda: {e}")  # <-- 4 SPAZI
+    print(f"🔍 Tipo errore: {type(e).__name__}")  # <-- 4 SPAZI
     return None
 
 return risultato
-        except Exception as e:
-            print(f"❌ Errore durante l'elaborazione della domanda: {e}")
-            print(f"🔍 Tipo errore: {type(e).__name__}")
-            return None
+
 
     # --- FASE 5: ESEMPI DI UTILIZZO ---
     print("\n" + "="*80)
