@@ -966,31 +966,34 @@ def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150, ricerca
     print(f"\n❓ Domanda: {domanda}")  # <-- CORRETTO: f"
     print("\n🔄 Elaborazione della risposta in corso...")
     
-    try:  # <-- CORRETTO: indentato con 4 spazi
-        # Eseguiamo la catena con la domanda
-        risultato = qa_chain({"query": domanda})
-        
-        # Stampiamo la risposta
-        print("\n🤖 Risposta dall'IA DSC:")
-        print("=" * 60)
-        print(risultato['result'])
-        print("=" * 60)
-        
-        # Stampiamo le fonti se richiesto
+try:
+    # Eseguiamo la catena con la domanda
+    risultato = qa_chain({"query": domanda})
+    
+    # Stampiamo la risposta
+    print("\n🤖 Risposta dall'IA DSC:")
+    print("=" * 60)
+    print(risultato['result'])
+    print("=" * 60)
+    
     # Stampiamo le fonti se richiesto
     if mostra_fonti and risultato.get('source_documents'):
-        print(f"\n📚 Fonti utilizzate ({len(risultato['source_documents'])}) documenti:")
+        print(f"\n📚 Fonti utilizzate ({len(risultato['source_documents'])} documenti):")
         print("-" * 50)
+        
+        for i, doc in enumerate(risultato['source_documents'], 1):
+            # Estrai metadati in modo sicuro
+            source = doc.metadata.get('source', 'Fonte sconosciuta')
+            chunk_id = doc.metadata.get('chunk_id', 'N/A')
+            
+            # Tronca l'estratto se troppo lungo
+            estratto = doc.page_content[:max_lunghezza_estratto]
+            if len(doc.page_content) > max_lunghezza_estratto:
+                estratto += "..."
                 
-                for i, doc in enumerate(risultato['source_documents'], 1):
-                    # Estrai metadati in modo sicuro
-                    source = doc.metadata.get('source', 'Fonte sconosciuta')
-                    chunk_id = doc.metadata.get('chunk_id', 'N/A')
-                    
-                    # Tronca l'estratto se troppo lungo
-                    estratto = doc.page_content[:max_lunghezza_estratto]
-                    if len(doc.page_content) > max_lunghezza_estratto:
-                        estratto += "..."
+except Exception as e:  # <-- AGGIUNGI QUESTO BLOCCO
+    print(f"❌ Errore durante l'elaborazione della domanda: {e}")
+    return None
                     
                     print(f"  {i}. 📄 {source}")
                     print(f"     🆔 Chunk: {chunk_id}")
