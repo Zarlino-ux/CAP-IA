@@ -182,7 +182,8 @@ print("Downloading phi3 model...")
 st.header("Download Modello Phi3")
 st.markdown("Esegui questo comando nel tuo terminale:")
 st.code("ollama pull phi3", language="bash")
-st.info("Nota: Questo comando deve essere eseguito in un terminale, non in questo script.")print("Phi3 model download complete.")
+st.info("Nota: Questo comando deve essere eseguito in un terminale, non in questo script.")
+print("Phi3 model download complete.")
 
 # ==================================================================================
 # PROGETTO DSC-IA: FASE 1 - DIGITALIZZATORE WEB & PDF (Versione 2.0)
