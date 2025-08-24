@@ -975,7 +975,7 @@ def poni_domanda(domanda, mostra_fonti=True, max_lunghezza_estratto=150, ricerca
         print(risultato['result'])
         print("=" * 60)            
             # Stampiamo le fonti se richiesto
-            if mostra_fonti and risultato.get('source_documents'):
+        if mostra_fonti and risultato.get('source_documents'):
                 print(f"\n📚 Fonti utilizzate ({len(risultato['source_documents'])} documenti):")
                 print("-" * 50)
                 
