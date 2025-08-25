@@ -1,40 +1,387 @@
 import requests
 import trafilatura
-# ... rest of your code
+import streamlit as st
+import pandas as pd
+import subprocess
+import os
+import google.generativeai as genai
+# from google.colab import userdata, drive  # COMMENTATO - Non disponibile fuori da Colab
+import time
+import math
 
-# Importiamo le librerie che ci servono
-import requests
-import trafilatura
-
-# --- Inserisci qui l'URL che vuoi testare ---
-url_da_provare = "https://www.vatican.va/roman_curia/pontifical_councils/justpeace/documents/rc_pc_justpeace_doc_20060526_compendio-dott-soc_it.html"
-
-print(f"Sto scaricando la pagina: {url_da_provare}")
-
-# 1. Scarichiamo il contenuto della pagina web
+# Importazioni condizionali per evitare errori
 try:
-    response = requests.get(url_da_provare, headers={'User-Agent': 'Mozilla/5.0'})
-    response.raise_for_status() # Controlla se ci sono stati errori HTTP (es. 404)
+    import chromadb
+    from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
+    from llama_index.vector_stores.chroma import ChromaVectorStore
+    from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+    from llama_index.llms.ollama import Ollama
+    HAS_LLAMA_INDEX = True
+except ImportError:
+    HAS_LLAMA_INDEX = False
+    st.warning("⚠️ LlamaIndex non installato. Alcune funzionalità potrebbero non essere disponibili.")
 
-    # 2. Usiamo trafilatura per estrarre il testo principale.
-    #    Questa singola riga sostituisce tutto il lavoro che prima faceva BeautifulSoup!
-    print("Estrazione del testo in corso con Trafilatura...")
-    testo_pulito = trafilatura.extract(response.text)
+try:
+    from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+    from langchain_community.vectorstores import FAISS
+    from langchain.chains import RetrievalQA
+    from langchain.prompts import PromptTemplate
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+    HAS_LANGCHAIN = True
+except ImportError:
+    HAS_LANGCHAIN = False
+    st.warning("⚠️ LangChain non installato. Alcune funzionalità potrebbero non essere disponibili.")
 
-    # 3. Stampiamo le prime 1000 lettere del risultato per vedere com'è
-    if testo_pulito:
-        print("\n--- INIZIO ESTRATTO ---")
-        print(testo_pulito[:1000])
-        print("--- FINE ESTRATTO ---")
+try:
+    import fitz  # PyMuPDF
+    HAS_PYMUPDF = True
+except ImportError:
+    HAS_PYMUPDF = False
+
+# --- Configurazione dell'interfaccia Streamlit ---
+st.set_page_config(
+    page_title="DSC-IA Assistente",
+    page_icon="🤖",
+    layout="wide"
+)
+
+st.title("🤖 DSC-IA Assistente")
+st.markdown("Interfaccia per dialogare con il database di conoscenza sulla Dottrina Sociale della Chiesa")
+
+# --- Sidebar per le impostazioni ---
+with st.sidebar:
+    st.header("⚙️ Configurazione")
+    
+    # Input per API Key
+    api_key = st.text_input("Inserisci la tua Google API Key:", type="password", 
+                           help="Ottieni una chiave API gratuita da: https://makersuite.google.com/app/apikey")
+    
+    if api_key:
+        os.environ['GOOGLE_API_KEY'] = api_key
+        genai.configure(api_key=api_key)
+        st.success("✅ API Key configurata!")
+        
+        # Test API
+        try:
+            models = list(genai.list_models())
+            st.success("✅ Connessione API verificata")
+        except Exception as e:
+            st.error(f"❌ Errore API: {e}")
+    
+    st.markdown("---")
+    
+    # Parametri avanzati
+    st.subheader("🎛️ Parametri")
+    max_lunghezza_estratto = st.slider(
+        "Lunghezza massima dell'estratto dalle fonti",
+        min_value=50,
+        max_value=500,
+        value=150,
+        step=25
+    )
+    
+    mostra_fonti_default = st.checkbox("Mostra fonti per default", value=True)
+    ricerca_multilingue_default = st.checkbox("Ricerca multilingue", value=True)
+    
+    st.markdown("---")
+    st.header("ℹ️ Informazioni")
+    st.markdown("""
+    **Sistema DSC-IA:**
+    - 🧠 Modello: Google Gemini
+    - 🔍 Embedding: Google Embedding-001  
+    - 📚 Database: FAISS Vector Store
+    - 🌍 Supporto: Italiano/Inglese
+    """)
+
+# --- SEZIONE TEST URL ---
+def test_url_extraction():
+    """Funzione per testare l'estrazione da URL"""
+    st.subheader("🔍 Test Estrazione URL")
+    
+    url_test = st.text_input("URL da testare:", 
+                            value="https://www.vatican.va/roman_curia/pontifical_councils/justpeace/documents/rc_pc_justpeace_doc_20060526_compendio-dott-soc_it.html")
+    
+    if st.button("Testa Estrazione"):
+        if url_test:
+            try:
+                with st.spinner("Estrazione in corso..."):
+                    response = requests.get(url_test, headers={'User-Agent': 'Mozilla/5.0'})
+                    response.raise_for_status()
+                    
+                    testo_pulito = trafilatura.extract(response.text)
+                    
+                    if testo_pulito:
+                        st.success("✅ Estrazione completata!")
+                        st.text_area("Estratto del testo:", testo_pulito[:1000], height=200)
+                    else:
+                        st.error("❌ Nessun testo principale trovato nella pagina.")
+                        
+            except requests.exceptions.RequestException as e:
+                st.error(f"❌ Errore durante il download: {e}")
+        else:
+            st.warning("⚠️ Inserisci un URL da testare.")
+
+# --- SEZIONE INSTALLAZIONE ---
+with st.expander("📦 Guida Installazione"):
+    st.markdown("### Installa Ollama (Opzionale)")
+    st.code("curl https://ollama.com/install.sh | sh", language="bash")
+    
+    st.markdown("### Installa Librerie Python")
+    st.code("""
+pip install streamlit trafilatura pandas google-generativeai langchain-google-genai langchain langchain-community faiss-cpu
+    """, language="bash")
+
+# --- SEZIONE CARICAMENTO DATI DA GOOGLE SHEETS ---
+st.header("📊 Caricamento dati da Google Sheets")
+
+url_foglio_google = st.text_input("URL del foglio Google (formato CSV):", 
+                                 value="https://docs.google.com/spreadsheets/d/1Oqq2d1YodTM_qwCuQxud1O8AZdfRQIQQ/export?format=csv")
+
+if st.button("📥 Carica dati da Google Sheets"):
+    if url_foglio_google:
+        try:
+            with st.spinner("Caricamento dati in corso..."):
+                df = pd.read_csv(url_foglio_google)
+                st.success("✅ Dati caricati correttamente!")
+                
+                st.subheader("📋 Anteprima dei dati")
+                st.dataframe(df.head())
+                
+                st.subheader("📊 Informazioni sul dataset")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Righe", df.shape[0])
+                with col2:
+                    st.metric("Colonne", df.shape[1])
+                with col3:
+                    st.metric("Valori mancanti", df.isnull().sum().sum())
+                    
+        except Exception as e:
+            st.error(f"❌ Errore nel caricamento dei dati: {e}")
     else:
-        print("Trafilatura non ha trovato un corpo di testo principale in questa pagina.")
+        st.warning("⚠️ Inserisci l'URL del foglio Google.")
 
-except requests.exceptions.RequestException as e:
-    print(f"Errore durante il download della pagina: {e}")
+# --- FUNZIONI HELPER ---
+def estrai_testo_da_url(url_da_analizzare):
+    """Funzione per estrarre testo da un link web."""
+    try:
+        response = requests.get(url_da_analizzare, headers={'User-Agent': 'Mozilla/5.0'}, timeout=20)
+        response.raise_for_status()
+        testo_pulito = trafilatura.extract(response.text)
+        return testo_pulito
+    except requests.exceptions.RequestException as e:
+        st.error(f"❌ Errore durante l'analisi dell'URL: {e}")
+        return None
 
-from google.colab import drive
-drive.mount('/content/drive')
+def estrai_testo_da_pdf(percorso_completo_pdf):
+    """Funzione per estrarre testo da un file PDF."""
+    if not HAS_PYMUPDF:
+        st.error("❌ PyMuPDF non installato. Installa con: pip install pymupdf")
+        return None
+    
+    try:
+        testo_completo = ""
+        with fitz.open(percorso_completo_pdf) as doc:
+            for pagina in doc:
+                testo_completo += pagina.get_text()
+        return testo_completo
+    except Exception as e:
+        st.error(f"❌ Errore durante l'analisi del PDF: {e}")
+        return None
 
+# --- FUNZIONE PRINCIPALE PER LE DOMANDE ---
+@st.cache_resource
+def inizializza_sistema(percorso_db, api_key):
+    """Inizializza il sistema DSC-IA"""
+    if not HAS_LANGCHAIN:
+        st.error("❌ LangChain non disponibile. Installa con: pip install langchain-google-genai langchain langchain-community faiss-cpu")
+        return None, None
+    
+    try:
+        embeddings_model = GoogleGenerativeAIEmbeddings(
+            model="models/embedding-001",
+            google_api_key=api_key
+        )
+        
+        vector_db = FAISS.load_local(
+            percorso_db, 
+            embeddings_model, 
+            allow_dangerous_deserialization=True
+        )
+        
+        llm = ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash", 
+            temperature=0.3,
+            google_api_key=api_key,
+            convert_system_message_to_human=True
+        )
+        
+        retriever = vector_db.as_retriever(
+            search_type="similarity", 
+            search_kwargs={"k": 5, "fetch_k": 20}
+        )
+        
+        custom_prompt_template = """Sei un assistente esperto in Dottrina Sociale della Chiesa e filosofia. 
+Usa SOLO le informazioni fornite nel contesto per rispondere alla domanda.
+Se le informazioni non sono sufficienti per una risposta completa, dillo chiaramente.
+
+Contesto dai documenti:
+{context}
+
+Domanda: {question}
+
+Rispondi in modo chiaro, strutturato e preciso, citando quando possibile i concetti specifici dai documenti forniti."""
+
+        custom_prompt = PromptTemplate(
+            template=custom_prompt_template,
+            input_variables=["context", "question"]
+        )
+        
+        qa_chain = RetrievalQA.from_chain_type(
+            llm=llm,
+            chain_type="stuff",
+            retriever=retriever,
+            return_source_documents=True,
+            chain_type_kwargs={"prompt": custom_prompt},
+            verbose=False
+        )
+        
+        return qa_chain, vector_db
+        
+    except Exception as e:
+        st.error(f"❌ Errore durante l'inizializzazione: {e}")
+        return None, None
+
+def poni_domanda(qa_chain, vector_db, domanda, mostra_fonti=True, max_lunghezza_estratto=150):
+    """Funzione per porre una domanda al sistema DSC-IA"""
+    try:
+        risultato = qa_chain({"query": domanda})
+        
+        # Mostra la risposta
+        st.subheader("🤖 Risposta dall'IA DSC:")
+        st.write(risultato['result'])
+        
+        # Mostra le fonti se richiesto
+        if mostra_fonti and risultato.get('source_documents'):
+            with st.expander(f"📚 Fonti utilizzate ({len(risultato['source_documents'])} documenti)"):
+                for i, doc in enumerate(risultato['source_documents'], 1):
+                    source = doc.metadata.get('source', 'Fonte sconosciuta')
+                    chunk_id = doc.metadata.get('chunk_id', 'N/A')
+                    
+                    estratto = doc.page_content[:max_lunghezza_estratto]
+                    if len(doc.page_content) > max_lunghezza_estratto:
+                        estratto += "..."
+                    
+                    st.markdown(f"**{i}. 📄 {source}**")
+                    st.caption(f"🆔 Chunk: {chunk_id}")
+                    st.text_area(f"📝 Estratto {i}:", estratto, height=100, key=f"extract_{i}")
+                    if i < len(risultato['source_documents']):
+                        st.markdown("---")
+        
+        return risultato
+        
+    except Exception as e:
+        st.error(f"❌ Errore durante l'elaborazione della domanda: {e}")
+        return None
+
+# --- INTERFACCIA PRINCIPALE ---
+st.markdown("---")
+st.header("💬 Interfaccia di Dialogo")
+
+if api_key:
+    percorso_db = st.text_input("📁 Percorso del database vettoriale:", 
+                               value="DSC_Vector_DB",
+                               help="Percorso locale dove si trova il database FAISS")
+    
+    if st.button("🚀 Inizializza Sistema"):
+        if os.path.exists(percorso_db):
+            with st.spinner("Caricamento del database e inizializzazione del modello..."):
+                qa_chain, vector_db = inizializza_sistema(percorso_db, api_key)
+                
+            if qa_chain:
+                st.session_state.qa_chain = qa_chain
+                st.session_state.vector_db = vector_db
+                st.success("✅ Sistema pronto all'uso!")
+            else:
+                st.error("❌ Errore durante l'inizializzazione del sistema.")
+        else:
+            st.error(f"❌ Il percorso '{percorso_db}' non esiste. Verifica il percorso del database.")
+            
+    # Interfaccia per le domande
+    if 'qa_chain' in st.session_state:
+        st.markdown("---")
+        
+        # Input della domanda
+        domanda = st.text_area("❓ Scrivi la tua domanda:", 
+                              height=100, 
+                              placeholder="Esempio: Spiegami il principio di sussidiarietà per una piccola impresa")
+        
+        col1, col2 = st.columns([1, 3])
+        
+        with col1:
+            if st.button("🔍 Cerca risposta", type="primary"):
+                if domanda:
+                    with st.spinner("🔄 Ricerca della risposta..."):
+                        risultato = poni_domanda(
+                            st.session_state.qa_chain,
+                            st.session_state.vector_db,
+                            domanda,
+                            mostra_fonti=mostra_fonti_default,
+                            max_lunghezza_estratto=max_lunghezza_estratto
+                        )
+                else:
+                    st.warning("⚠️ Per favore, inserisci una domanda.")
+        
+        with col2:
+            st.markdown("**💡 Esempi di domande:**")
+            st.markdown("• Cos'è il principio di sussidiarietà?")
+            st.markdown("• What is the universal destination of goods?")
+            st.markdown("• Come si applica la solidarietà nell'economia?")
+            st.markdown("• Spiegami il rapporto tra lavoro e dignità umana")
+        
+        # --- SEZIONE ESEMPI PREDEFINITI ---
+        st.markdown("---")
+        st.subheader("📚 Domande di Esempio")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button("🏢 Sussidiarietà per le imprese"):
+                with st.spinner("Ricerca in corso..."):
+                    poni_domanda(
+                        st.session_state.qa_chain,
+                        st.session_state.vector_db,
+                        "Come faccio a migliorare la sussidiarietà nella mia azienda di 13 dipendenti che produce scarpe, in Veneto",
+                        mostra_fonti=mostra_fonti_default,
+                        max_lunghezza_estratto=max_lunghezza_estratto
+                    )
+        
+        with col2:
+            if st.button("⛪ Principi fondamentali DSC"):
+                with st.spinner("Ricerca in corso..."):
+                    poni_domanda(
+                        st.session_state.qa_chain,
+                        st.session_state.vector_db,
+                        "Quali sono i principi fondamentali della Dottrina Sociale della Chiesa?",
+                        mostra_fonti=mostra_fonti_default,
+                        max_lunghezza_estratto=max_lunghezza_estratto
+                    )
+
+else:
+    st.warning("⚠️ Inserisci una Google API Key nella sidebar per iniziare.")
+    st.info("💡 Ottieni una chiave API gratuita da: https://makersuite.google.com/app/apikey")
+
+# --- SEZIONE TEST URL (opzionale) ---
+with st.expander("🔧 Test Estrazione URL"):
+    test_url_extraction()
+
+# --- FOOTER ---
+st.markdown("---")
+st.caption("""
+**DSC-IA Assistente** - Sistema di domande e risposte basato sulla Dottrina Sociale della Chiesa  
+Developed with ❤️ using Streamlit, LangChain e Google AI
+""")
 # Install Ollama application
 # CAP-IA
 
